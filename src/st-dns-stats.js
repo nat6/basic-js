@@ -1,28 +1,33 @@
 import { NotImplementedError } from '../extensions/index.js';
 
-/**
- * Given an array of domains, return the object with the appearances of the DNS.
- *
- * @param {Array} domains
- * @return {Object}
- *
- * @example
- * domains = [
- *  'code.yandex.ru',
- *  'music.yandex.ru',
- *  'yandex.ru'
- * ]
- *
- * The result should be the following:
- * {
- *   '.ru': 3,
- *   '.ru.yandex': 3,
- *   '.ru.yandex.code': 1,
- *   '.ru.yandex.music': 1,
- * }
- *
- */
-export default function getDNSStats(/* domains */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+export default function getDNSStats(domains) {
+  let res = {};
+  if (domains.length === 0) return res;
+
+  let tempArr = [];
+
+  domains.forEach(elem => {
+    if (elem.match(/\.\w+$/)) tempArr.push(elem.match(/\.\w+$/)[0]);
+  });
+
+  res[tempArr[0]] = tempArr.length;
+  tempArr = [];
+
+  domains.forEach(elem => {
+    if (elem.match(/\.\w+\.\w+$/)) tempArr.push(elem.match(/\.\w+\.\w+$/)[0]);
+    else if (elem.match(/^\w+\.\w+$/)) tempArr.push(elem.match(/^\w+\.\w+$/)[0]);
+  });
+
+  res['.' + tempArr[0].split(".").reverse().join(".")] = tempArr.length;
+  tempArr = [];
+
+
+  domains.forEach(elem => {
+    if (elem.match(/\w+\.\w+\.\w+$/)) tempArr.push(elem.match(/\w+\.\w+\.\w+$/)[0]);
+  });
+
+  if (tempArr.length > 0) res['.' + tempArr[0].split(".").reverse().join(".")] = 1;
+  tempArr = [];
+
+  return res;
 }
